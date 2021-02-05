@@ -11,6 +11,7 @@ import API from '@/api'
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+
 Vue.prototype.$ = jquery
 Vue.prototype.API = API
 
