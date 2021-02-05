@@ -1,6 +1,6 @@
 export default {
   baseUrl: {
-    dev: 'http://localhost:3000',
-    pro: 'http://www.toimc.com:12000'
+    dev: 'http://localhost:9420',
+    pro: '47.110.240.19'
   }
 }

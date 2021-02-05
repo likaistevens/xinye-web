@@ -14,7 +14,7 @@ class PublicController {
             width: 150,
             height: 50
         })
-        setValue(query.sid, newCaptcha.text, 10 * 60)
+        // setValue(query.sid, newCaptcha.text, 10 * 60)
         // getValue(query.sid).then(res => console.log(res))
         ctx.body = {
             code: 200,

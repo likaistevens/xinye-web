@@ -1,3 +1,4 @@
+import { error } from 'console';
 import redis from 'redis'
 
 const options = {
@@ -46,14 +47,36 @@ const setValue = (key, value, time) => {
 
 const { promisify } = require("util");
 const getAsync = promisify(client.get).bind(client);
+const hgetAsync = promisify(client.hget).bind(client);
+const hgetallAsync = promisify(client.hgetall).bind(client);
+const hdelAsync = promisify(client.hdel).bind(client);
+const delAsync = promisify(client.del).bind(client);
 
-const getValue = (key) => {
-    console.log(getAsync(key))
-    return getAsync(key)
+const getValue = (key,item) => {
+    if(item){
+        return hgetAsync(key, item)
+    }else{
+        return getAsync(key)
+    }
+}
+
+const getHashValue = (key) => {
+    return hgetallAsync(key)
+}
+
+const deleteHash = (key,item) => {
+    console.log(key, item)
+    if(item){
+        return hdelAsync(key, item)
+    }else {
+        return delAsync(key)
+    }
 }
 
 export {
     client,
     getValue,
-    setValue
+    setValue,
+    getHashValue,
+    deleteHash
 }

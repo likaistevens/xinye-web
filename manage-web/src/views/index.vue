@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div style="display: flex; justify-content: space-between;margin-bottom: 20px">
-      <el-button type="primary" @click="saveConfig">保存配置</el-button>
+      <!-- <el-button type="primary" @click="saveConfig">保存配置</el-button> -->
       <!-- <el-button @click="test" type="primary">测试</el-button> -->
 
       <!-- <span style="color: red">注意：使用后，请务必点击左侧“保存配置”按钮</span> -->
@@ -12,7 +12,7 @@
             <br>
             步骤二：点击“选择文件”按钮，选择需要上传的excel文件。即可自动生成物料明细
             <br>
-            步骤三：可以点击“增加元器件”按钮来手动添加元器件
+            步骤三：也可以点击“增加元器件”按钮来手动添加元器件
             <br>
             步骤四：点击“保存”按钮。
             <br>
@@ -219,8 +219,21 @@ export default {
     this.$('#excel-file').change(e => {
       this.onUploadExcelFile(e, this)
     })
+    this.getProductList()
   },
   methods: {
+    getProductList() {
+      this.API.getProductList().then(res => {
+        const data = res.data
+        this.productList = Object.keys(data).map(key => {
+          return {
+            name: key,
+            elementList: JSON.parse(data[key])
+          }
+        })
+        console.log(this.productList)
+      })
+    },
     onDownLoad() {
       // console.log(this.showTableData)
       this.tableToExcel(this.showTableData)
@@ -271,6 +284,10 @@ export default {
       this.addElementList.splice(index, 1)
     },
     onSaveAddElement() {
+      if (!this.settingProductName) {
+        this.$message.error('请输入产品名称')
+        return
+      }
       const elementList = this.addElementList.map(element => {
         return {
           ...element
@@ -306,9 +323,15 @@ export default {
 
       this.elementList = tempList
       // console.log(this.elementList)
-      // 清空设置页
-      this.addElementList = []
-      this.settingProductName = ''
+      this.API.saveProduct({
+        productName: this.settingProductName,
+        elementList: this.elementList
+      }).then(res => {
+        this.getProductList()
+        // 清空设置页
+        this.addElementList = []
+        this.settingProductName = ''
+      })
     },
     onUploadExcelFile(e, _this) {
       var files = e.target.files
@@ -424,8 +447,14 @@ export default {
       this.showTableData = showTableData
     },
     onDeleteProduct(scope) {
-      const index = scope.$index
-      this.productList.splice(index, 1)
+      const productName = scope.row.name
+      this.API.deleteProduct({ productName }).then(() => {
+        this.getProductList()
+        const index = scope.$index
+        this.productList.splice(index, 1)
+      }).catch(err => {
+        this.$message.error(err)
+      })
     },
     onDeleteElement(scope) {
       const index = scope.$index
@@ -474,15 +503,15 @@ export default {
       a.dataset.downloadurl = ['text/json', a.download, a.href].join(':')
       e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
       a.dispatchEvent(e)
-    },
-    saveConfig() {
-      const json = JSON.stringify({
-        productList: this.productList,
-        elementList: this.elementList
-      })
-      const config = `config(${json})`
-      this.saveJSON(config, 'config.json')
     }
+    // saveConfig() {
+    //   const json = JSON.stringify({
+    //     productList: this.productList,
+    //     elementList: this.elementList
+    //   })
+    //   const config = `config(${json})`
+    //   this.saveJSON(config, 'config.json')
+    // }
   }
 }
 </script>

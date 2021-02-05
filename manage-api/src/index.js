@@ -17,7 +17,7 @@ import config from './config/index'
 const app = new koa()
 
 // 定义公共的路径，不需要jwt鉴权   uless后面的路径不校验, 传入一个数组，里面是正则表达式，匹配路由
-const jwt = JWT({ secret: config.JWT_SECRET }).unless({ path: [/^\/public/, /\/login/] })
+// const jwt = JWT({ secret: config.JWT_SECRET }).unless({ path: [/^\/public/, /\/login/] })
 
 // app.use(combineRouter())
 // app.use(statics(path.join(__dirname, '../public')))
@@ -30,7 +30,7 @@ const middleware = compose([
     jsonutil({pretty: false, param: 'pretty'}),
     helmet(),
     errorHandler,
-    jwt
+    // jwt
     // combineRouter() 
 ])
 
