@@ -36,8 +36,8 @@ const middleware = compose([
 
 app.use(middleware)
 app.use(combineRouter())
-console.log('listen to 80')
-app.listen(80)
+// console.log('listen to 80')
+// app.listen(80)
 
-// console.log('listen to 9420')
-// app.listen(9420)
+console.log('listen to 9420')
+app.listen(9420)
